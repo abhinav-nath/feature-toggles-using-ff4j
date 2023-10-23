@@ -2,6 +2,7 @@ plugins {
   id 'java'
   id 'org.springframework.boot' version "${springBootVersion}"
   id 'io.spring.dependency-management' version "${springDependencyManagementPluginVersion}"
+  id 'org.flywaydb.flyway' version "${flywayVersion}"
 }
 
 group = 'com.codecafe'
@@ -23,9 +24,31 @@ repositories {
 
 dependencies {
   implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+  implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+  implementation "org.ff4j:ff4j-spring-boot-starter:${ff4jVersion}"
+  implementation "org.ff4j:ff4j-security-spring:${ff4jVersion}"
+  implementation "org.ff4j:ff4j-store-springjdbc:${ff4jVersion}"
+  implementation "org.ff4j:ff4j-web:${ff4jVersion}"
+  implementation "org.flywaydb:flyway-core:${flywayVersion}"
+  implementation "com.zaxxer:HikariCP:${hikariCpVersion}"
+
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+  runtimeOnly "org.postgresql:postgresql:${postgresVersion}"
+
   testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+
+  testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+
+  testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
+
+flyway {
+  url = System.getenv("JDBC_DATABASE_URL") ?: 'jdbc:postgresql://localhost:5432/featureToggleServiceDb'
+  user = System.getenv("JDBC_DATABASE_USERNAME") ?: 'featureToggleServiceDbUser'
+  password = System.getenv("JDBC_DATABASE_PASSWORD") ?: 'featureToggleServiceDbPassword'
+  baselineOnMigrate = true
 }
 
 tasks.named('test') {

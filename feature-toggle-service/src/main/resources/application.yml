@@ -1,0 +1,98 @@
+api:
+  info:
+    title: Feature Toggle Service
+    description: Used to manage Feature Toggles data
+    version: 1.0.0
+    contact:
+      name: Feature Toggles Team
+      email: FeatureToggles@Example.com
+
+spring:
+  application:
+    name: feature-toggle-service
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/featureToggleServiceDb"
+    username: "featureToggleServiceDbUser"
+    password: "featureToggleServiceDbPassword"
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 20000
+  flyway:
+    baselineOnMigrate: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        id:
+          new_generator_mappings: true
+    show-sql: true
+  sleuth:
+    sampler:
+      probability: 1 # report 100% of traces
+  thymeleaf:
+    cache: false
+  session:
+    store-type: JDBC
+    jdbc:
+      initialize-schema: ALWAYS
+
+springdoc:
+  swagger-ui:
+    display-request-duration: true
+    disable-swagger-default-url: true
+    enabled: true
+    path: /swaggerui
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, component-connectivity
+      base-path: /
+  endpoint:
+    health:
+      show-details: never
+  health:
+    defaults:
+      enabled: false
+    db:
+      enabled: true
+    refresh:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+logging:
+  level:
+    ROOT: INFO
+    httpclient: WARN
+    org.apache: WARN
+    org.hibernate: WARN
+    org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter: WARN
+
+app:
+  service-auth:
+    enable-security: false
+    unsecured-routes:
+      - "/health/**"
+      - "/info/**"
+      - "/swagger-ui/**"
+      - "/swaggerui"
+      - "/v3/api-docs/**"
+      - "/component-connectivity/**"
+      - "/component-connectivity"
+      - "/logout/callback"
+      - "/features/**"
+      - "/features"
+      - "/"
